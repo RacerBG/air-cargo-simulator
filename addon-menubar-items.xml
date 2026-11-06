@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###########################################################################
+#  Air Cargo Simulator                                                    #
+#                                                                         #
+#  Created by: Georgi Georgiev (RacerBG)                                  #
+#                                                                         #
+#  Copyright (C) 2026 Georgi Georgiev (RacerBG)                           #
+#                                                                         #
+#  This program is free software: you can redistribute it and/or modify   #
+#  it under the terms of the GNU General Public License as published by   #
+#  the Free Software Foundation, either version 3 of the License, or      #
+#  (at your option) any later version.                                    #
+#                                                                         #
+#  This program is distributed in the hope that it will be useful,        #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          #
+#  GNU General Public License for more details.                           #
+###########################################################################
+-->
+<PropertyList>
+  <meta>
+    <file-type type="string">FlightGear add-on menu bar items</file-type>
+    <format-version type="int">1</format-version>
+  </meta>
+
+  <menubar-items>
+    <menu>
+      <label>Air Cargo Simulator</label>
+      <enabled type="bool">true</enabled>
+
+      <item>
+        <label>Current Delivery</label>
+        <binding>
+          <command>dialog-show</command>
+          <dialog-name>current-delivery</dialog-name>
+        </binding>
+      </item>
+
+      <item>
+        <label>Local Deliveries</label>
+        <binding>
+          <command>dialog-show</command>
+          <dialog-name>local-deliveries</dialog-name>
+        </binding>
+      </item>
+
+      <item>
+        <label>Statistics</label>
+        <binding>
+          <command>dialog-show</command>
+          <dialog-name>statistics</dialog-name>
+        </binding>
+      </item>
+
+      <item>
+        <label>Help</label>
+        <binding>
+          <command>dialog-show</command>
+          <dialog-name>help</dialog-name>
+        </binding>
+      </item>
+
+      <item>
+        <label>About</label>
+        <binding>
+          <command>dialog-show</command>
+          <dialog-name>about</dialog-name>
+        </binding>
+      </item>
+
+    </menu>
+  </menubar-items>
+</PropertyList>

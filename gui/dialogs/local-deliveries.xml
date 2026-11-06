@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###########################################################################
+#  Air Cargo Simulator                                                    #
+#                                                                         #
+#  Created by: Georgi Georgiev (RacerBG)                                  #
+#                                                                         #
+#  Copyright (C) 2026 Georgi Georgiev (RacerBG)                           #
+#                                                                         #
+#  This program is free software: you can redistribute it and/or modify   #
+#  it under the terms of the GNU General Public License as published by   #
+#  the Free Software Foundation, either version 3 of the License, or      #
+#  (at your option) any later version.                                    #
+#                                                                         #
+#  This program is distributed in the hope that it will be useful,        #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          #
+#  GNU General Public License for more details.                           #
+###########################################################################
+-->
+<PropertyList>
+  <name>local-deliveries</name>
+  <width>900</width>
+  <height>750</height>
+  <modal>false</modal>
+  <draggable>true</draggable>
+  <layout>vbox</layout>
+
+  <nasal>
+    <open>
+      acs.populateDialog(cmdarg());
+    </open>
+  </nasal>
+
+  <!-- Header -->
+  <group>
+    <layout>hbox</layout>
+
+    <empty>
+      <stretch>true</stretch>
+    </empty>
+
+    <text>
+      <label>Local Deliveries</label>
+    </text>
+
+    <empty>
+      <stretch>true</stretch>
+    </empty>
+  </group>
+
+  <hrule/>
+
+  <!-- Main content -->
+  <group>
+    <layout>vbox</layout>
+
+    <!-- Delivery list -->
+    <group>
+      <layout>vbox</layout>
+    </group>
+  </group>
+
+  <hrule/>
+
+<!-- Footer -->
+<group>
+    <layout>hbox</layout>
+
+    <empty>
+        <stretch>true</stretch>
+    </empty>
+
+    <button>
+        <legend>Close</legend>
+        <equal>true</equal>
+        <key>Esc</key>
+        <default>true</default>
+        <binding>
+            <command>dialog-close</command>
+        </binding>
+    </button>
+
+    <empty>
+        <stretch>true</stretch>
+    </empty>
+</group>
+</PropertyList>

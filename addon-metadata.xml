@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###########################################################################
+#  Air Cargo Simulator                                                    #
+#                                                                         #
+#  Created by: Georgi Georgiev (RacerBG)                                  #
+#                                                                         #
+#  Copyright (C) 2026 Georgi Georgiev (RacerBG)                           #
+#                                                                         #
+#  This program is free software: you can redistribute it and/or modify   #
+#  it under the terms of the GNU General Public License as published by   #
+#  the Free Software Foundation, either version 3 of the License, or      #
+#  (at your option) any later version.                                    #
+#                                                                         #
+#  This program is distributed in the hope that it will be useful,        #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          #
+#  GNU General Public License for more details.                           #
+###########################################################################
+-->
+<PropertyList>
+  <meta>
+    <file-type type="string">FlightGear add-on metadata</file-type>
+    <format-version type="int">1</format-version>
+  </meta>
+
+  <addon>
+    <identifier type="string">air.cargo.simulator</identifier>
+    <name type="string">Air Cargo Simulator</name>
+    <version type="string">1.0.0</version>
+    <min-FG-version type="string">2024.1.0</min-FG-version>
+    <max-FG-version type="string">none</max-FG-version>
+    
+    <authors>
+        <author>
+            <name type="string">Georgi Georgiev (RacerBG)</name>
+        </author>
+    </authors>
+    
+    <maintainers>
+        <maintainer>
+            <name type="string">Georgi Georgiev (RacerBG)</name>
+        </maintainer>
+    </maintainers>
+    
+    <short-description type="string">A cargo delivery simulator for FlightGear.</short-description>
+  </addon>
+</PropertyList>

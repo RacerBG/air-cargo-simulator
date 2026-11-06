@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###########################################################################
+#  Air Cargo Simulator                                                    #
+#                                                                         #
+#  Created by: Georgi Georgiev (RacerBG)                                  #
+#                                                                         #
+#  Copyright (C) 2026 Georgi Georgiev (RacerBG)                           #
+#                                                                         #
+#  This program is free software: you can redistribute it and/or modify   #
+#  it under the terms of the GNU General Public License as published by   #
+#  the Free Software Foundation, either version 3 of the License, or      #
+#  (at your option) any later version.                                    #
+#                                                                         #
+#  This program is distributed in the hope that it will be useful,        #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          #
+#  GNU General Public License for more details.                           #
+###########################################################################
+-->
+<PropertyList>
+  <name>about</name>
+  <width>450</width>
+  <height>250</height>
+  <modal>false</modal>
+  <draggable>true</draggable>
+  <layout>vbox</layout>
+
+  <!-- Header -->
+  <group>
+    <layout>hbox</layout>
+
+    <empty>
+      <stretch>true</stretch>
+    </empty>
+
+    <text>
+      <label>About</label>
+    </text>
+
+    <empty>
+      <stretch>true</stretch>
+    </empty>
+  </group>
+  
+  <hrule/>
+
+  <!-- Main content -->
+  <group>
+    <layout>vbox</layout>
+
+    <empty>
+      <stretch>true</stretch>
+    </empty>
+    
+    <text>
+        <label>Air Cargo Simulator 1.0.0</label>
+    </text>
+    
+    <text>
+        <label></label>
+    </text>
+    
+    <text>
+        <label>A cargo delivery simulator for FlightGear.</label>
+    </text>
+    
+    <text>
+        <label>Created by: Georgi Georgiev (RacerBG)</label>
+    </text>
+    
+    <text>
+        <label>License: GPL-3.0-or-later</label>
+    </text>
+
+    <empty>
+      <stretch>true</stretch>
+    </empty>
+  </group>
+  
+  <hrule/>
+
+  <!-- Footer -->
+  <group>
+    <layout>hbox</layout>
+
+    <empty>
+      <stretch>true</stretch>
+    </empty>
+
+    <button>
+      <legend>Close</legend>
+      <binding>
+        <command>dialog-close</command>
+      </binding>
+    </button>
+
+    <empty>
+      <stretch>true</stretch>
+    </empty>
+  </group>
+</PropertyList>

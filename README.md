@@ -1,6 +1,4 @@
-# Air Cargo Simulator
-
-A cargo delivery simulator add-on for [FlightGear](https://www.flightgear.org/).
+# Air Cargo Simulator – A cargo delivery add-on for FlightGear
 
 ## About
 This add-on introduces a streamlined cargo delivery simulation to FlightGear, enhancing your flying experience with dynamic cargo transport tasks, career progression, and rewards.

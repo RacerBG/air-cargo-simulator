@@ -16,11 +16,11 @@ This add-on introduces a streamlined cargo delivery simulation to FlightGear, en
 1. Download the latest release from the [Releases](https://github.com/RacerBG/air-cargo-simulator/releases) page (or clone the repository).
 2. Enable Air Cargo Simulator in the FlightGear launcher under the "Add-ons" tab.
 
+## Compatibility
+The add-on is designed for and works best with the Cessna 170B, Cessna 172P, Cessna 182S, and Piper PA28-161 Warrior II. Other aircraft are also supported, but the physical weight of the cargo will not affect the aircraft's weight and balance.
+
 ## Usage
 Available cargo offers can be found at the airports.
-The add-on was tested with the Cessna 172P, Cessna 182S and Piper PA28-161 Warrior II.
-It is meant to be played with small single-engine aircraft.
-
 In order to commence any cargo operations:
 - You must be in the vicinity of an airport.
 - The aircraft must be on the ground and completely stationary.

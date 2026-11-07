@@ -271,8 +271,9 @@ var populateStatistics = func(dialog) {
 
 var populateDialog = func(dialog) {
     var canAccept = isReadyForDelivery();
+    var canSearchOffers = isAircraftOnGround() and isAtAirport();
 
-        if (activeJob == nil and canAccept) {
+        if (activeJob == nil and canSearchOffers) {
             var currentAirportId = getCurrentAirportId();
 
             if (currentAirportId != nil) {
@@ -336,9 +337,12 @@ var populateDialog = func(dialog) {
     }
 
     if (size(offers) == 0) {
-        if (canAccept) {
-            addCell(2, 0, "No nearby airports found.", 300);
+        for (var row = 2; row < maxOffers + 2; row += 1) {
+            for (var col = 0; col < size(widths); col += 1) {
+                addCell(row, col, "", widths[col]);
+            }
         }
+
         return;
     }
 

@@ -59,7 +59,6 @@ var saveStatistics = func {
         "delivered-cargo-kg": deliveredCargoKg,
         "delivery-distance-nm": deliveryDistanceNm
     });
-
     return io.write_properties(savePath, data) != nil;
 };
 
@@ -355,13 +354,16 @@ var populateDialog = func(dialog) {
             "pref-height": 16
         });
 
-        if (activeJob == nil and canAccept) {
+        if (buttonText == "SELECT") {
             button.setValues({
                 binding: {
                     command: "nasal",
                     script: "acs.acceptJob(" ~ i ~ ");"
                 }
             });
+        } else {
+            var enableCondition = button.addChild("enable");
+            enableCondition.addChild("false");
         }
     }
 };

@@ -39,17 +39,17 @@ var cargoTypes = [
     { name: "Weather Monitoring Instruments", minWeight: 3, maxWeight: 20, pricePerKg: 15 },
 ];
 
-var budget = 100;
-var searchRangeNm = 500;
-var maxOffers = 25;
 var offers = [];
-var offersAirportId = nil;
-var activeJob = nil;
-var activeJobIndex = nil;
-var deliveryTimer = nil;
+var budget = 100;
+var maxOffers = 25;
+var searchRangeNm = 500;
 var completedDeliveries = 0;
 var deliveredCargoKg = 0;
 var deliveryDistanceNm = 0;
+var activeJob = nil;
+var activeJobIndex = nil;
+var deliveryTimer = nil;
+var offersAirportId = nil;
 var savePath = getprop("/sim/fg-home") ~ "/Export/ACS-save.xml";
 
 var saveStatistics = func {
@@ -193,14 +193,12 @@ var completeDelivery = func {
         return;
     }
 
-    var destination = activeJob.airportName;
     budget += activeJob.payment;
     completedDeliveries += 1;
     deliveredCargoKg += activeJob.weightKg;
     deliveryDistanceNm += activeJob.distanceNm;
     setprop("/payload/weight[4]/weight-lb", 0);
     setprop("/sim/messages/copilot", "Cargo unloaded successfully!");
-    var saved = saveStatistics();
 
     if (deliveryTimer != nil) {
         deliveryTimer.stop();
@@ -342,7 +340,6 @@ var populateDialog = func(dialog) {
                 addCell(row, col, "", widths[col]);
             }
         }
-
         return;
     }
 

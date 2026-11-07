@@ -27,7 +27,7 @@
   <addon>
     <identifier type="string">air.cargo.simulator</identifier>
     <name type="string">Air Cargo Simulator</name>
-    <version type="string">1.0.0</version>
+    <version type="string">1.0.1</version>
     <min-FG-version type="string">2024.1.0</min-FG-version>
     <max-FG-version type="string">none</max-FG-version>
     
@@ -43,6 +43,6 @@
         </maintainer>
     </maintainers>
     
-    <short-description type="string">A cargo delivery simulator for FlightGear.</short-description>
+    <short-description type="string">A cargo delivery add-on for FlightGear.</short-description>
   </addon>
 </PropertyList>

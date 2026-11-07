@@ -135,24 +135,7 @@ var getCurrentAirportId = func {
     if (size(airports) == 0) {
         return nil;
     }
-
-    var nearestAirport = nil;
-    var nearestDistance = 999999;
-
-    foreach (var apt; airports) {
-        var distance = courseAndDistance(apt)[1];
-
-        if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearestAirport = apt;
-        }
-    }
-
-    if (nearestAirport == nil) {
-        return nil;
-    }
-
-    return nearestAirport.id;
+    return airports[0].id;
 };
 
 var isReadyForDelivery = func {
@@ -352,7 +335,7 @@ var populateDialog = func(dialog) {
         addCell(row, 2, offer.cargoName, widths[2]);
         addCell(row, 3, offer.weightKg ~ " KG", widths[3]);
         addCell(row, 4, offer.payment ~ " EUR", widths[4]);
-        addCell(row, 5, offer.distanceNm ~ " NM", widths[5]);
+        addCell(row, 5, sprintf("%.1f", offer.distanceNm) ~ " NM", widths[5]);
 
         var buttonText = "N/A";
 
@@ -406,7 +389,7 @@ var generateOffers = func {
                 cargoName: cargo.name,
                 weightKg: int(weight),
                 payment: int(weight * cargo.pricePerKg),
-                distanceNm: int(distanceNm)
+                distanceNm: distanceNm
             });
         }
     }
@@ -433,7 +416,7 @@ var acceptJob = func(index) {
 
     if (deliveryTimer == nil) {
         deliveryTimer = maketimer(10, checkDelivery);
-        deliveryTimer.simulatedTime = 10;
+        deliveryTimer.simulatedTime = 1;
     }
 
     deliveryTimer.start();

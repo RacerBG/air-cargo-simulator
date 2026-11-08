@@ -245,27 +245,32 @@ var populateStatistics = func(dialog) {
     }
 
     if (reputationLabel != nil) {
-    reputationLabel.setValue("Rank: " ~ getReputation());
+        reputationLabel.setValue("Rank: " ~ getReputation());
     }
 };
 
 var populateDialog = func(dialog) {
-    var canAccept = isReadyForDelivery();
-    var canSearchOffers = isAircraftOnGround() and isAtAirport();
+    var onGround = isAircraftOnGround();
+    var canAccept = false;
+    var canSearchOffers = false;
+    var currentAirportId = nil;
 
-        if (activeJob == nil and canSearchOffers) {
-            var currentAirportId = getCurrentAirportId();
+    if (onGround) {
+        canAccept = isAircraftStopped() and isAircraftEngineStopped();
+        currentAirportId = getCurrentAirportId();
+        canSearchOffers = currentAirportId != nil;
+        canAccept = canAccept and canSearchOffers;
+    }
 
-            if (currentAirportId != nil) {
-                if (currentAirportId != offersAirportId) {
-                    offers = [];
-                    offersAirportId = currentAirportId;
-                }
+    if (activeJob == nil and canSearchOffers) {
+        if (currentAirportId != offersAirportId) {
+            offers = [];
+            offersAirportId = currentAirportId;
+        }
 
-                if (size(offers) == 0) {
-                    generateOffers();
-                }
-            }
+        if (size(offers) == 0) {
+            generateOffers();
+        }
     }
 
     var list = dialog.getNode("group[1]/group[0]");
@@ -376,9 +381,13 @@ var generateOffers = func {
     var airports = findAirportsWithinRange(searchRangeNm);
 
     foreach (var apt; airports) {
+        if (size(offers) >= maxOffers) {
+            return offers;
+        }
+
         var distanceNm = courseAndDistance(apt)[1];
 
-        if (distanceNm >= 1 and size(offers) < maxOffers) {
+        if (distanceNm >= 1) {
             var cargo = cargoTypes[
                 math.floor(rand() * size(cargoTypes))
             ];

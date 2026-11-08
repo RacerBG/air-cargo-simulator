@@ -17,26 +17,26 @@
 ###########################################################################
 
 var cargoTypes = [
-    { name: "Classified Documents", minWeight: 1, maxWeight: 10, pricePerKg: 35 },
-    { name: "Fresh Flowers", minWeight: 5, maxWeight: 25, pricePerKg: 5 },
-    { name: "Mail Boxes", minWeight: 15, maxWeight: 30, pricePerKg: 2 },
-    { name: "Medical Supplies", minWeight: 10, maxWeight: 60, pricePerKg: 15 },
-    { name: "Military Equipment", minWeight: 25, maxWeight: 50, pricePerKg: 25 },
-    { name: "Scientific Samples", minWeight: 2, maxWeight: 15, pricePerKg: 20 },
-    { name: "Survey Equipment", minWeight: 5, maxWeight: 35, pricePerKg: 5 },
-    { name: "Aircraft Spare Parts", minWeight: 5, maxWeight: 55, pricePerKg: 10 },
-    { name: "Bakery Products", minWeight: 15, maxWeight: 30, pricePerKg: 2 },
-    { name: "Refrigerated Food", minWeight: 10, maxWeight: 40, pricePerKg: 5 },
-    { name: "Veterinary Vaccines", minWeight: 1, maxWeight: 10, pricePerKg: 20 },
-    { name: "Newspapers and Magazines", minWeight: 30, maxWeight: 60, pricePerKg: 1 },
-    { name: "Legal Parcels", minWeight: 1, maxWeight: 15, pricePerKg: 5 },
-    { name: "Land Surveying Tripods", minWeight: 5, maxWeight: 30, pricePerKg: 10 },
-    { name: "Radio Communication Equipment", minWeight: 5, maxWeight: 30, pricePerKg: 10 },
-    { name: "Water Testing Kits", minWeight: 1, maxWeight: 10, pricePerKg: 15 },
-    { name: "Computer Components", minWeight: 5, maxWeight: 25, pricePerKg: 15 },
-    { name: "Antique Collectibles", minWeight: 2, maxWeight: 25, pricePerKg: 25 },
-    { name: "Luxury Goods", minWeight: 3, maxWeight: 20, pricePerKg: 20 },
-    { name: "Weather Monitoring Instruments", minWeight: 3, maxWeight: 20, pricePerKg: 15 },
+    { name: "Classified Documents", minWeight: 1, maxWeight: 5, pricePerKg: 40 },
+    { name: "Fresh Flowers", minWeight: 10, maxWeight: 30, pricePerKg: 10 },
+    { name: "Mail Boxes", minWeight: 25, maxWeight: 50, pricePerKg: 5 },
+    { name: "Medical Supplies", minWeight: 15, maxWeight: 60, pricePerKg: 15 },
+    { name: "Military Equipment", minWeight: 30, maxWeight: 75, pricePerKg: 15 },
+    { name: "Scientific Samples", minWeight: 1, maxWeight: 15, pricePerKg: 20 },
+    { name: "Survey Equipment", minWeight: 10, maxWeight: 40, pricePerKg: 5 },
+    { name: "Aircraft Spare Parts", minWeight: 15, maxWeight: 65, pricePerKg: 10 },
+    { name: "Bakery Products", minWeight: 20, maxWeight: 50, pricePerKg: 2 },
+    { name: "Refrigerated Food", minWeight: 15, maxWeight: 50, pricePerKg: 5 },
+    { name: "Veterinary Vaccines", minWeight: 1, maxWeight: 15, pricePerKg: 20 },
+    { name: "Newspapers and Magazines", minWeight: 50, maxWeight: 100, pricePerKg: 2 },
+    { name: "Legal Parcels", minWeight: 1, maxWeight: 5, pricePerKg: 30 },
+    { name: "Land Surveying Tripods", minWeight: 10, maxWeight: 40, pricePerKg: 5 },
+    { name: "Radio Communication Equipment", minWeight: 10, maxWeight: 40, pricePerKg: 10 },
+    { name: "Water Testing Kits", minWeight: 1, maxWeight: 10, pricePerKg: 20 },
+    { name: "Computer Components", minWeight: 5, maxWeight: 35, pricePerKg: 15 },
+    { name: "Antique Collectibles", minWeight: 2, maxWeight: 30, pricePerKg: 20 },
+    { name: "Luxury Goods", minWeight: 5, maxWeight: 25, pricePerKg: 25 },
+    { name: "Weather Monitoring Instruments", minWeight: 5, maxWeight: 30, pricePerKg: 15 }
 ];
 
 var offers = [];
@@ -47,6 +47,7 @@ var completedDeliveries = 0;
 var deliveredCargoKg = 0;
 var deliveryDistanceNm = 0;
 var activeJob = nil;
+var activeJobAircraft = nil;
 var activeJobIndex = nil;
 var deliveryTimer = nil;
 var offersAirportId = nil;
@@ -91,21 +92,69 @@ var loadStatistics = func {
 };
 
 var getReputation = func {
-    if (deliveryDistanceNm >= 10000) {
+    if (completedDeliveries >= 100 and deliveryDistanceNm >= 10000) {
         return "Chief Pilot";
     }
-    elsif (deliveryDistanceNm >= 5000) {
+    elsif (completedDeliveries >= 50 and deliveryDistanceNm >= 5000) {
         return "Type Rating Instructor";
     }
-    elsif (deliveryDistanceNm >= 2500) {
+    elsif (completedDeliveries >= 25 and deliveryDistanceNm >= 2500) {
         return "Captain";
     }
-    elsif (deliveryDistanceNm >= 500) {
+    elsif (completedDeliveries >= 5 and deliveryDistanceNm >= 500) {
         return "First Officer";
     }
     else {
         return "Cadet";
     }
+};
+
+var getBaggageCompartments = func {
+    var payload = props.globals.getNode("/payload");
+
+    if (payload == nil) {
+        return [];
+    }
+
+    var compartments = [];
+
+    foreach (var weight; payload.getChildren("weight")) {
+        var name = weight.getValue("name");
+        var maxLb = weight.getValue("max-lb");
+
+        if ((name == "Baggage" or name == "Baggage 1" or name == "Baggage 2" or name == "Luggage") and maxLb != nil and maxLb > 0) {
+            append(compartments, {
+                index: weight.getIndex(),
+                maxLb: maxLb
+            });
+        }
+    }
+    return compartments;
+};
+
+var getCargoCapacityLb = func(compartments) {
+    var capacity = 0;
+
+    foreach (var compartment; compartments) {
+        capacity += compartment.maxLb;
+    }
+    return capacity;
+};
+
+var setAircraftCargoWeight = func(compartments, weightLb) {
+    var remaining = weightLb;
+
+    foreach (var compartment; compartments) {
+        var compartmentWeight = remaining;
+
+        if (compartmentWeight > compartment.maxLb) {
+            compartmentWeight = compartment.maxLb;
+        }
+
+        setprop("/payload/weight[" ~ compartment.index ~ "]/weight-lb", compartmentWeight);
+        remaining -= compartmentWeight;
+    }
+    return remaining <= 0.001;
 };
 
 var isAircraftOnGround = func {
@@ -179,7 +228,7 @@ var completeDelivery = func {
     completedDeliveries += 1;
     deliveredCargoKg += activeJob.weightKg;
     deliveryDistanceNm += activeJob.distanceNm;
-    setprop("/payload/weight[4]/weight-lb", 0);
+    setAircraftCargoWeight(activeJobAircraft, 0);
     setprop("/sim/messages/copilot", "Cargo unloaded successfully!");
 
     if (deliveryTimer != nil) {
@@ -187,6 +236,7 @@ var completeDelivery = func {
     }
 
     activeJob = nil;
+    activeJobAircraft = nil;
     activeJobIndex = nil;
     offers = [];
     offersAirportId = getCurrentAirportId();
@@ -412,17 +462,32 @@ var acceptJob = func(index) {
         return;
     }
 
-    if (!isReadyForDelivery()) {
-        return;
-    }
-
     if (index < 0 or index >= size(offers)) {
         return;
     }
 
+    var compartments = getBaggageCompartments();
+
+    if (size(compartments) == 0) {
+        setprop("/sim/messages/copilot", "Aircraft not supported!");
+        return;
+    }
+
+    if (!isReadyForDelivery()) {
+        return;
+    }
+
+    var cargoWeightLb = offers[index].weightKg * 2.20462262;
+
+    if (cargoWeightLb > getCargoCapacityLb(compartments)) {
+        setprop("/sim/messages/copilot", "Cargo too heavy!");
+        return;
+    }
+
     activeJob = offers[index];
+    activeJobAircraft = compartments;
     activeJobIndex = index;
-    setprop("/payload/weight[4]/weight-lb", activeJob.weightKg * 2.20462262);
+    setAircraftCargoWeight(compartments, cargoWeightLb);
     setprop("/sim/messages/copilot", "Cargo loaded successfully!");
 
     if (deliveryTimer == nil) {

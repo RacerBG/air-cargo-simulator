@@ -27,7 +27,7 @@
   <addon>
     <identifier type="string">air.cargo.simulator</identifier>
     <name type="string">Air Cargo Simulator</name>
-    <version type="string">1.0.2</version>
+    <version type="string">1.0.3</version>
     <min-FG-version type="string">2024.1.0</min-FG-version>
     <max-FG-version type="string">none</max-FG-version>
     

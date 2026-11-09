@@ -54,7 +54,7 @@
     </empty>
     
     <text>
-        <label>Air Cargo Simulator 1.0.3</label>
+        <label>Air Cargo Simulator 1.0.4</label>
     </text>
     
     <text>
@@ -63,6 +63,10 @@
     
     <text>
         <label>A cargo delivery add-on for FlightGear.</label>
+    </text>
+    
+    <text>
+        <label></label>
     </text>
     
     <text>

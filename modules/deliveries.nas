@@ -28,15 +28,76 @@ var cargoTypes = [
     { name: "Bakery Products", minWeight: 20, maxWeight: 50, pricePerKg: 2 },
     { name: "Refrigerated Food", minWeight: 15, maxWeight: 50, pricePerKg: 5 },
     { name: "Veterinary Vaccines", minWeight: 1, maxWeight: 15, pricePerKg: 20 },
-    { name: "Newspapers and Magazines", minWeight: 50, maxWeight: 100, pricePerKg: 2 },
+    { name: "Newspapers", minWeight: 50, maxWeight: 100, pricePerKg: 2 },
     { name: "Legal Parcels", minWeight: 1, maxWeight: 5, pricePerKg: 30 },
     { name: "Land Surveying Tripods", minWeight: 10, maxWeight: 40, pricePerKg: 5 },
-    { name: "Radio Communication Equipment", minWeight: 10, maxWeight: 40, pricePerKg: 10 },
+    { name: "Radio Equipment", minWeight: 10, maxWeight: 40, pricePerKg: 10 },
     { name: "Water Testing Kits", minWeight: 1, maxWeight: 10, pricePerKg: 20 },
     { name: "Computer Components", minWeight: 5, maxWeight: 35, pricePerKg: 15 },
     { name: "Antique Collectibles", minWeight: 2, maxWeight: 30, pricePerKg: 20 },
     { name: "Luxury Goods", minWeight: 5, maxWeight: 25, pricePerKg: 25 },
-    { name: "Weather Monitoring Instruments", minWeight: 5, maxWeight: 30, pricePerKg: 15 }
+    { name: "Weather Instruments", minWeight: 5, maxWeight: 30, pricePerKg: 15 }
+];
+
+var companyFirstName = [
+    "North", "South", "East", "West", "White", "Black", "Bronze", "Silver", "Golden", "Platinum",
+    "Euro", "Global", "World", "Solar", "Galactic", "Apex", "Prime", "Quantum", "Vector", "Frontier"
+];
+
+var companySecondName = [
+    "Wing", "Sky", "Star", "Horizon", "Falcon", "Nebula", "Cluster", "Phoenix", "Raven", "Dragon",
+    "Pioneer", "Bull", "Atlas", "Orion", "Swift", "Arrow", "Comet", "Meteor", "Pegasus", "Eagle"
+];
+
+var companyThirdName = [
+    "Logistics", "Cargo", "Express", "Transport", "Airways", "Solutions", "Airlines", "Aviation", "Transit", "Dispatch",
+    "Distribution", "Transfers", "Network", "Systems", "Hub", "Lines", "Ways", "Carriers", "Shuttle", "Freight"
+];
+
+var arrivalMessages = [
+    "Thank you for your reliable service!",
+    "Another successful delivery. We appreciate your work!",
+    "Thank you for working with us!",
+    "Excellent work. We hope to work with you again!",
+    "Your cargo arrived safely. The payment has been processed.",
+    "We look forward to working with you again!",
+    "The shipment has been received. Thank you for your help!",
+    "A job well done. We appreciate your professionalism!",
+    "Our delivery is completed. Thank you for your assistance!",
+    "Thank you for bringing the shipment safely to its destination!",
+    "Your service is greatly appreciated. Thank you!",
+    "Everything arrived safely. We appreciate your help!",
+    "Another delivery is completed. It was a pleasure working with you!",
+    "The payment has been confirmed. Thank you for the excellent service!",
+    "We appreciate your time and professionalism!",
+    "Thank you for making this delivery!",
+    "We hope to see you on another assignment soon!",
+    "The shipment is safely delivered. Excellent work!",
+    "Thank you for taking such good care of our cargo!",
+    "Well done. We look forward to your next delivery!"
+];
+
+var departureMessages = [
+    "Thank you for accepting this assignment. Fly safe!",
+    "The shipment is ready. We wish you a smooth flight!",
+    "We appreciate you taking this delivery.",
+    "The cargo is now in your baggage compartment. Safe travels!",
+    "Everything is arranged on our end. Have a good flight!",
+    "Our customer is looking forward to this delivery.",
+    "Thanks for taking the job. Keep safe up there!",
+    "We trust you to get this shipment there safely!",
+    "Your delivery is confirmed. Have a pleasant journey!",
+    "We appreciate your cooperation. See you at the destination!",
+    "The shipment is cleared for departure. Good luck!",
+    "Thanks for choosing to work with us. Fly safe!",
+    "Please take good care of our shipment!",
+    "We are counting on a safe delivery. Best of luck!",
+    "Another shipment is ready to take to the skies. Thank you!",
+    "All set. We wish you a trouble-free flight!",
+    "Thank you for taking care of our customer's cargo!",
+    "We look forward to your safe arrival!",
+    "Your help is appreciated. Have a safe journey!",
+    "Good luck with the delivery!"
 ];
 
 var offers = [];
@@ -89,6 +150,27 @@ var loadStatistics = func {
     if (value != nil) {
         deliveryDistanceNm = value;
     }
+};
+
+var generateCompanyName = func {
+    var first = companyFirstName[
+        math.floor(rand() * size(companyFirstName))
+    ];
+
+    var second = companySecondName[
+        math.floor(rand() * size(companySecondName))
+    ];
+
+    var third = companyThirdName[
+        math.floor(rand() * size(companyThirdName))
+    ];
+
+    return first ~ " " ~ second ~ " " ~ third;
+};
+
+var showCompanyMessage = func(companyName, messages) {
+    var index = math.floor(rand() * size(messages));
+    screen.log.write(companyName ~ ": " ~ messages[index], 0.56, 0.93, 0.56);
 };
 
 var getReputation = func {
@@ -230,6 +312,7 @@ var completeDelivery = func {
     deliveryDistanceNm += activeJob.distanceNm;
     setAircraftCargoWeight(activeJobAircraft, 0);
     setprop("/sim/messages/copilot", "Cargo unloaded successfully!");
+    showCompanyMessage(activeJob.companyName, arrivalMessages);
 
     if (deliveryTimer != nil) {
         deliveryTimer.stop();
@@ -245,10 +328,11 @@ var completeDelivery = func {
 
 var populateMessage = func(dialog) {
     var destinationLabel = dialog.getNode("group[1]/text[0]/label");
-    var cargoLabel = dialog.getNode("group[1]/text[1]/label");
-    var weightLabel = dialog.getNode("group[1]/text[2]/label");
-    var paymentLabel = dialog.getNode("group[1]/text[3]/label");
+    var companyLabel = dialog.getNode("group[1]/text[1]/label");
+    var cargoLabel = dialog.getNode("group[1]/text[2]/label");
+    var weightLabel = dialog.getNode("group[1]/text[3]/label");
     var distanceLabel = dialog.getNode("group[1]/text[4]/label");
+    var paymentLabel = dialog.getNode("group[1]/text[5]/label");
 
     if (destinationLabel == nil or cargoLabel == nil or
         weightLabel == nil or paymentLabel == nil or
@@ -258,16 +342,18 @@ var populateMessage = func(dialog) {
 
     if (activeJob == nil) {
         destinationLabel.setValue("No delivery has been selected yet.");
+        companyLabel.setValue("");
         cargoLabel.setValue("");
         weightLabel.setValue("Available cargo offers can be found at the airports.");
-        paymentLabel.setValue("");
         distanceLabel.setValue("Complete deliveries to earn money and increase your rank.");
+        paymentLabel.setValue("");
     } else {
         destinationLabel.setValue("Destination Airport: " ~ activeJob.airportName ~ " (" ~ activeJob.airportId ~ ")");
+        companyLabel.setValue("Company: " ~ activeJob.companyName);
         cargoLabel.setValue("Cargo Type: " ~ activeJob.cargoName);
         weightLabel.setValue("Weight: " ~ activeJob.weightKg ~ " KG");
-        paymentLabel.setValue("Earnings: " ~ activeJob.payment ~ " EUR");
-        distanceLabel.setValue("Delivery Distance: " ~ sprintf("%.1f", activeJob.distanceNm) ~ " NM");
+        distanceLabel.setValue("Earnings: " ~ activeJob.payment ~ " EUR");
+        paymentLabel.setValue("Delivery Distance: " ~ sprintf("%.1f", activeJob.distanceNm) ~ " NM");
     }
 };
 
@@ -351,6 +437,7 @@ var populateDialog = func(dialog) {
     var headings = [
         "ICAO",
         "Airport Name",
+        "Company",
         "Cargo Type",
         "Weight",
         "Earnings",
@@ -358,7 +445,7 @@ var populateDialog = func(dialog) {
         "Action"
     ];
 
-    var widths = [50, 300, 200, 75, 75, 75, 75];
+    var widths = [50, 250, 200, 150, 75, 75, 75, 75];
 
     for (var col = 0; col < size(headings); col += 1) {
         var cell = list.addChild("text");
@@ -386,10 +473,11 @@ var populateDialog = func(dialog) {
 
         addCell(row, 0, offer.airportId, widths[0]);
         addCell(row, 1, offer.airportName, widths[1]);
-        addCell(row, 2, offer.cargoName, widths[2]);
-        addCell(row, 3, offer.weightKg ~ " KG", widths[3]);
-        addCell(row, 4, offer.payment ~ " EUR", widths[4]);
-        addCell(row, 5, sprintf("%.1f", offer.distanceNm) ~ " NM", widths[5]);
+        addCell(row, 2, offer.companyName, widths[2]);
+        addCell(row, 3, offer.cargoName, widths[3]);
+        addCell(row, 4, offer.weightKg ~ " KG", widths[4]);
+        addCell(row, 5, offer.payment ~ " EUR", widths[5]);
+        addCell(row, 6, sprintf("%.1f", offer.distanceNm) ~ " NM", widths[6]);
 
         var buttonText = "N/A";
 
@@ -404,7 +492,7 @@ var populateDialog = func(dialog) {
         button.setValues({
             legend: buttonText,
             row: row,
-            col: 6,
+            col: 7,
             "pref-width": 64,
             "pref-height": 16
         });
@@ -447,6 +535,7 @@ var generateOffers = func {
             append(offers, {
                 airportId: apt.id,
                 airportName: apt.name,
+                companyName: generateCompanyName(),
                 cargoName: cargo.name,
                 weightKg: int(weight),
                 payment: int(weight * cargo.pricePerKg),
@@ -489,6 +578,7 @@ var acceptJob = func(index) {
     activeJobIndex = index;
     setAircraftCargoWeight(compartments, cargoWeightLb);
     setprop("/sim/messages/copilot", "Cargo loaded successfully!");
+    showCompanyMessage(activeJob.companyName, departureMessages);
 
     if (deliveryTimer == nil) {
         deliveryTimer = maketimer(10, checkDelivery);

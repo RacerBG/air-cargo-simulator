@@ -403,10 +403,6 @@ var populateMessage = func(dialog) {
     var distanceLabel = dialog.getNode("group[1]/text[4]/label");
     var paymentLabel = dialog.getNode("group[1]/text[5]/label");
 
-    if (destinationLabel == nil or companyLabel or cargoLabel == nil or weightLabel == nil or distanceLabel or paymentLabel == nil) {
-        return;
-    }
-
     if (activeJob == nil) {
         destinationLabel.setValue("No delivery has been selected yet.");
         companyLabel.setValue("");
@@ -431,30 +427,12 @@ var populateStatistics = func(dialog) {
     var cargoLabel = dialog.getNode("group[1]/text[3]/label");
     var distanceLabel = dialog.getNode("group[1]/text[4]/label");
     var reputationLabel = dialog.getNode("group[1]/text[5]/label");
-
-    if (budgetLabel != nil) {
-        budgetLabel.setValue("Budget: " ~ budget ~ " EUR");
-    }
-
-    if (deliveriesLabel != nil) {
-        deliveriesLabel.setValue("Completed Deliveries: " ~ completedDeliveries);
-    }
-
-    if (failedLabel != nil) {
-        failedLabel.setValue("Failed Deliveries: " ~ failedDeliveries);
-    }
-
-    if (cargoLabel != nil) {
-        cargoLabel.setValue("Delivered Cargo: " ~ deliveredCargoKg ~ " KG");
-    }
-
-    if (distanceLabel != nil) {
-        distanceLabel.setValue("Covered Distance: " ~ sprintf("%.1f", deliveryDistanceNm) ~ " NM");
-    }
-
-    if (reputationLabel != nil) {
-        reputationLabel.setValue("Rank: " ~ getReputation());
-    }
+    budgetLabel.setValue("Budget: " ~ budget ~ " EUR");
+    deliveriesLabel.setValue("Completed Deliveries: " ~ completedDeliveries);
+    failedLabel.setValue("Failed Deliveries: " ~ failedDeliveries);
+    cargoLabel.setValue("Delivered Cargo: " ~ deliveredCargoKg ~ " KG");
+    distanceLabel.setValue("Covered Distance: " ~ sprintf("%.1f", deliveryDistanceNm) ~ " NM");
+    reputationLabel.setValue("Rank: " ~ getReputation());
 };
 
 var populateDialog = func(dialog) {

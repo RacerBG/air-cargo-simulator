@@ -20,7 +20,7 @@ This add-on introduces a streamlined cargo delivery simulation to FlightGear, en
 2. Enable Air Cargo Simulator in the FlightGear launcher under the "Add-ons" tab.
 
 ## Compatibility
-This add-on is designed to work with a wide range of aircraft. Aircraft with supported baggage compartments are automatically detected, and cargo weight is added to the aircraft's weight and balance.
+This add-on is designed to work with a wide range of light aircraft. Aircraft with supported baggage compartments are automatically detected, and cargo weight is added to the aircraft's weight and balance.
 
 ## Usage
 Available cargo offers can be found at the airports.

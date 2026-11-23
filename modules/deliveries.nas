@@ -100,24 +100,52 @@ var departureMessages = [
     "Good luck with the delivery!"
 ];
 
+var failedMessages = [
+    "The cargo was damaged. We will not pay for this delivery!",
+    "That landing was unacceptable. Your payment has been deducted!",
+    "We trusted you with our shipment. What a disappointment!",
+    "The cargo is ruined. We expect you to cover the loss!",
+    "You have failed to deliver our goods safely. Payment denied!",
+    "That was an expensive mistake. We are deducting the agreed payment!",
+    "Our customer will not accept a damaged shipment!",
+    "We expected a professional pilot, not this!",
+    "The shipment is damaged. We are holding you responsible!",
+    "This is not the service we expected. No payment for you!",
+    "A terrible landing and a failed delivery. Unacceptable!",
+    "We will think twice before hiring you again!",
+    "You have destroyed our shipment. Your payment has been withheld!",
+    "The cargo is no longer usable. We are not paying!",
+    "Please learn to land before accepting our assignments!",
+    "We are extremely disappointed with your handling of this shipment!",
+    "The goods were damaged during landing. You will cover the loss!",
+    "The shipment is ruined. This is completely unacceptable!",
+    "Our customer is furious, and so are we!",
+    "We will not tolerate such careless handling of our cargo!"
+];
+
 var offers = [];
-var budget = 100;
+var budget = 1000;
 var maxOffers = 25;
 var searchRangeNm = 500;
 var completedDeliveries = 0;
+var failedDeliveries = 0;
 var deliveredCargoKg = 0;
 var deliveryDistanceNm = 0;
+var hardLandingThresholdFPM = 500;
 var activeJob = nil;
 var activeJobAircraft = nil;
 var activeJobIndex = nil;
 var deliveryTimer = nil;
 var offersAirportId = nil;
+var landingRateFPM = nil;
+var landingRateCaptured = false;
 var savePath = getprop("/sim/fg-home") ~ "/Export/ACS-save.xml";
 
 var saveStatistics = func {
     var data = props.Node.new({
         "budget": budget,
         "completed-deliveries": completedDeliveries,
+        "failed-deliveries": failedDeliveries,
         "delivered-cargo-kg": deliveredCargoKg,
         "delivery-distance-nm": deliveryDistanceNm
     });
@@ -139,6 +167,11 @@ var loadStatistics = func {
     value = data.getValue("completed-deliveries");
     if (value != nil) {
         completedDeliveries = value;
+    }
+
+    value = data.getValue("failed-deliveries");
+    if (value != nil) {
+        failedDeliveries = value;
     }
 
     value = data.getValue("delivered-cargo-kg");
@@ -287,6 +320,28 @@ var isAtDeliveryDestination = func {
     return false;
 };
 
+var captureLandingRate = func {
+    if (activeJob == nil or landingRateCaptured or
+        !isAtDeliveryDestination()) {
+        return;
+    }
+
+    var verticalSpeed = getprop("/velocities/vertical-speed-fps");
+
+    if (verticalSpeed == nil) {
+        return;
+    }
+
+    landingRateFPM = math.abs(verticalSpeed) * 60;
+    landingRateCaptured = true;
+};
+
+var onGearContact = func(node) {
+    if (node.getBoolValue()) {
+        captureLandingRate();
+    }
+};
+
 var checkDelivery = func {
     if (activeJob == nil) {
         deliveryTimer.stop();
@@ -306,21 +361,35 @@ var completeDelivery = func {
         return;
     }
 
-    budget += activeJob.payment;
-    completedDeliveries += 1;
-    deliveredCargoKg += activeJob.weightKg;
-    deliveryDistanceNm += activeJob.distanceNm;
+    var failed = landingRateCaptured and landingRateFPM >= hardLandingThresholdFPM;
+
+    if (failed) {
+        budget -= activeJob.payment;
+        failedDeliveries += 1;
+        deliveryDistanceNm += activeJob.distanceNm;
+        setprop("/sim/messages/copilot", "Cargo damaged!");
+        showCompanyMessage(activeJob.companyName, failedMessages);
+    } else {
+        budget += activeJob.payment;
+        completedDeliveries += 1;
+        deliveredCargoKg += activeJob.weightKg;
+        deliveryDistanceNm += activeJob.distanceNm;
+        setprop("/sim/messages/copilot", "Cargo unloaded!");
+        showCompanyMessage(activeJob.companyName, arrivalMessages);
+    }
+
     setAircraftCargoWeight(activeJobAircraft, 0);
-    setprop("/sim/messages/copilot", "Cargo unloaded successfully!");
-    showCompanyMessage(activeJob.companyName, arrivalMessages);
 
     if (deliveryTimer != nil) {
         deliveryTimer.stop();
     }
 
+    saveStatistics();
     activeJob = nil;
     activeJobAircraft = nil;
     activeJobIndex = nil;
+    landingRateFPM = nil;
+    landingRateCaptured = false;
     offers = [];
     offersAirportId = getCurrentAirportId();
     generateOffers();
@@ -334,18 +403,12 @@ var populateMessage = func(dialog) {
     var distanceLabel = dialog.getNode("group[1]/text[4]/label");
     var paymentLabel = dialog.getNode("group[1]/text[5]/label");
 
-    if (destinationLabel == nil or cargoLabel == nil or
-        weightLabel == nil or paymentLabel == nil or
-        distanceLabel == nil) {
-        return;
-    }
-
     if (activeJob == nil) {
         destinationLabel.setValue("No delivery has been selected yet.");
         companyLabel.setValue("");
-        cargoLabel.setValue("");
-        weightLabel.setValue("Available cargo offers can be found at the airports.");
-        distanceLabel.setValue("Complete deliveries to earn money and increase your rank.");
+        cargoLabel.setValue("Available cargo offers can be found at the airports.");
+        weightLabel.setValue("Complete deliveries to earn money and increase your rank.");
+        distanceLabel.setValue("Hard landings result in a failed delivery and a financial penalty.");
         paymentLabel.setValue("");
     } else {
         destinationLabel.setValue("Destination Airport: " ~ activeJob.airportName ~ " (" ~ activeJob.airportId ~ ")");
@@ -360,29 +423,16 @@ var populateMessage = func(dialog) {
 var populateStatistics = func(dialog) {
     var budgetLabel = dialog.getNode("group[1]/text[0]/label");
     var deliveriesLabel = dialog.getNode("group[1]/text[1]/label");
-    var cargoLabel = dialog.getNode("group[1]/text[2]/label");
-    var distanceLabel = dialog.getNode("group[1]/text[3]/label");
-    var reputationLabel = dialog.getNode("group[1]/text[4]/label");
-
-    if (budgetLabel != nil) {
-        budgetLabel.setValue("Budget: " ~ budget ~ " EUR");
-    }
-
-    if (deliveriesLabel != nil) {
-        deliveriesLabel.setValue("Completed Deliveries: " ~ completedDeliveries);
-    }
-
-    if (cargoLabel != nil) {
-        cargoLabel.setValue("Delivered Cargo: " ~ deliveredCargoKg ~ " KG");
-    }
-
-    if (distanceLabel != nil) {
-        distanceLabel.setValue("Covered Distance: " ~ sprintf("%.1f", deliveryDistanceNm) ~ " NM");
-    }
-
-    if (reputationLabel != nil) {
-        reputationLabel.setValue("Rank: " ~ getReputation());
-    }
+    var failedLabel = dialog.getNode("group[1]/text[2]/label");
+    var cargoLabel = dialog.getNode("group[1]/text[3]/label");
+    var distanceLabel = dialog.getNode("group[1]/text[4]/label");
+    var reputationLabel = dialog.getNode("group[1]/text[5]/label");
+    budgetLabel.setValue("Budget: " ~ budget ~ " EUR");
+    deliveriesLabel.setValue("Completed Deliveries: " ~ completedDeliveries);
+    failedLabel.setValue("Failed Deliveries: " ~ failedDeliveries);
+    cargoLabel.setValue("Delivered Cargo: " ~ deliveredCargoKg ~ " KG");
+    distanceLabel.setValue("Covered Distance: " ~ sprintf("%.1f", deliveryDistanceNm) ~ " NM");
+    reputationLabel.setValue("Rank: " ~ getReputation());
 };
 
 var populateDialog = func(dialog) {
@@ -576,8 +626,10 @@ var acceptJob = func(index) {
     activeJob = offers[index];
     activeJobAircraft = compartments;
     activeJobIndex = index;
+    landingRateFPM = nil;
+    landingRateCaptured = false;
     setAircraftCargoWeight(compartments, cargoWeightLb);
-    setprop("/sim/messages/copilot", "Cargo loaded successfully!");
+    setprop("/sim/messages/copilot", "Cargo loaded!");
     showCompanyMessage(activeJob.companyName, departureMessages);
 
     if (deliveryTimer == nil) {
@@ -594,3 +646,7 @@ var acceptJob = func(index) {
     fgcommand("dialog-close", dialogArgs);
     fgcommand("dialog-show", dialogArgs);
 };
+
+setlistener("/gear/gear[0]/wow", onGearContact, 0, 0);
+setlistener("/gear/gear[1]/wow", onGearContact, 0, 0);
+setlistener("/gear/gear[2]/wow", onGearContact, 0, 0);
